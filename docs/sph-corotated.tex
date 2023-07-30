@@ -1,0 +1,111 @@
+
+\documentclass{article}
+
+\usepackage{fullpage,amsmath,amssymb}
+\newcommand{\dt}{\Delta t}
+\newcommand{\pdv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\dv}[2]{\frac{d #1}{d #2}}
+\newcommand{\gp}[1]{{\left({#1}\right)}}
+\newcommand{\ab}[1]{{\left|{#1}\right|}}
+\newcommand{\mx}[1]{\begin{pmatrix}#1\end{pmatrix}}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+\newcommand{\xx}{\mathbf{x}}
+\renewcommand{\AA}{\mathbf{A}}
+\newcommand{\BB}{\mathbf{B}}
+\newcommand{\MM}{\mathbf{M}}
+\newcommand{\nn}{\mathbf{n}}
+\newcommand{\FF}{\mathbf{F}}
+\newcommand{\GG}{\mathbf{G}}
+\newcommand{\bg}{\mathbf{g}}
+\newcommand{\PP}{\mathbf{P}}
+\newcommand{\pp}{\mathbf{p}}
+\newcommand{\QQ}{\mathbf{Q}}
+\newcommand{\rr}{\mathbf{r}}
+\newcommand{\II}{\mathbf{I}}
+\newcommand{\KK}{\mathbf{K}}
+\newcommand{\uu}{\mathbf{u}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\ut}{\mathbf{\tilde{u}}}
+\newcommand{\ff}{\mathbf{f}}
+\newcommand{\cc}{\mathbf{c}}
+\newcommand{\ee}{\mathbf{e}}
+\newcommand{\CC}{\mathbf{C}}
+\newcommand{\DD}{\mathbf{D}}
+\newcommand{\JJ}{\mathbf{J}}
+\newcommand{\dd}{\mathbf{d}}
+\newcommand{\HH}{\mathbf{H}}
+\newcommand{\EE}{\mathbf{E}}
+\newcommand{\kk}{\mathbf{k}}
+\newcommand{\zz}{\mathbf{z}}
+\newcommand{\ww}{\mathbf{w}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\bmu}{\boldsymbol{\mu}}
+\DeclareMathOperator{\tr}{tr}
+
+\begin{document}
+
+\section{SPH-corotated}
+
+Reference \cite{becker:2009:sph-corotated}
+
+Let $\uu_{ij}=\uu_i - \uu_j = (\xx_i - \xx_i^0) - (\xx_j - \xx_j^0) $ be displacement vector. The Jacobian of mapping $\xx^0 \rightarrow \xx_0 + \uu$ is $\JJ = \nabla \xx^0 + \nabla \uu^T = \II + \nabla \uu^T$
+
+The SPH approximation of gradient $\nabla \uu_i$  will be
+\begin{equation}
+  \nabla \uu_i = \sum_j \tilde{v}_i \uu_{ji} \nabla W(\xx_{ij}^0 , h)^T \\
+\end{equation}
+
+There are two types of strain tensor introduced used in this paper. One is the non-linear Green-Saint-Venant strain tensor
+\begin{equation}
+\epsilon = \frac{1}{2} (\JJ^T \JJ - \II)
+\end{equation}
+
+Another is the linear Cauchy-Green strain tensor.  Both tensor referenced to \cite{bathe:2006:fep}. 
+\begin{equation}
+\epsilon  = \frac{1}{2} (\JJ + \JJ^T) - \II
+\end{equation}
+
+It has to meet the condition $\nabla \uu  \nabla \uu^T  = 0 $
+\begin{align}
+  \epsilon &= \frac{1}{2} ((\II + \nabla \uu) (\II + \nabla \uu^T) - \II ) \\
+  &= \frac{1}{2} ( \II + \nabla \uu + \II + \nabla \uu^T + \nabla \uu  \nabla \uu^T  - 2\II) \\
+  &= \frac{1}{2} (\JJ + \JJ^T) - \II
+\end{align}
+
+The strain energy $U_i$ is 
+\begin{equation}
+  U_i = \tilde{v}_i \frac{1}{2} (\epsilon_i \sigma_i) = \tilde{v}_i \frac{1}{2} (\epsilon_i \CC \epsilon)
+\end{equation}
+
+The $\CC \in \mathbb{R}$ is characterized by Young modulus $E$ and the Poisson ration $\nu$.
+
+with $\tilde{v}_i$ to be the initial volume of particle $i$.
+\begin{equation}
+\tilde{v}_i = \frac{m_i}{\sum_j m_j W(\xx_{ij}^0,h)} = \frac{m_i}{\rho_{i0}}
+\end{equation}
+
+%% \begin{align}
+%%   \nabla_{\uu_j} U_i & \\
+%%   U_i &= \tilde{v}_i \sigma_i          \frac{1}{2} (\frac{1}{2} (\JJ^T \JJ - \II)) \\
+%%   \nabla_{\uu_j} U_i &=\tilde{v}_i \sigma_i (- ( \II + \nabla \uu_i^T)  \nabla W(\xx_{ij}^0,h)
+%% \end{align}
+%% TODO I don't understand this part of gradient U
+%% I also don't find the linear
+
+
+The elastic forces $\ff_{ji}$ exerted on particle $j$ by particle $i$ when using the nonlinear Green-Saint-Venant strain tensor is
+\begin{equation}
+  \ff_{ji} = - \nabla_{\uu_j} U_i = - \tilde{v}_i ( \II + \nabla \uu_i^T) \sigma_i \tilde{v}_j \nabla W(\xx_{ij}^0,h)
+\end{equation}
+
+When using Cauchy-Green tensor, it will simplifies to 
+\begin{equation}
+  \ff_{ji} = - \tilde{v}_i \sigma_i \tilde{v}_j \nabla W(\xx_{ij}^0,h)
+\end{equation}
+
+
+
+\bibliographystyle{apalike}
+\bibliography{../../references}
+\end{document}

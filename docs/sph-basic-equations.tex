@@ -1,0 +1,135 @@
+\documentclass{article}
+
+\usepackage{fullpage,amsmath}
+
+\newcommand{\dt}{\Delta t}
+\newcommand{\pdv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\dv}[2]{\frac{d #1}{d #2}}
+\newcommand{\gp}[1]{{\left({#1}\right)}}
+\newcommand{\ab}[1]{{\left|{#1}\right|}}
+\newcommand{\mx}[1]{\begin{pmatrix}#1\end{pmatrix}}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+\newcommand{\xx}{\mathbf{x}}
+\renewcommand{\AA}{\mathbf{A}}
+\renewcommand{\aa}{\mathbf{a}}
+\newcommand{\BB}{\mathbf{B}}
+\newcommand{\MM}{\mathbf{M}}
+\newcommand{\nn}{\mathbf{n}}
+\newcommand{\FF}{\mathbf{F}}
+\newcommand{\GG}{\mathbf{G}}
+\newcommand{\bg}{\mathbf{g}}
+\newcommand{\PP}{\mathbf{P}}
+\newcommand{\pp}{\mathbf{p}}
+\newcommand{\QQ}{\mathbf{Q}}
+\newcommand{\qq}{\mathbf{q}}
+\newcommand{\rr}{\mathbf{r}}
+\newcommand{\II}{\mathbf{I}}
+\newcommand{\KK}{\mathbf{K}}
+\newcommand{\uu}{\mathbf{u}}
+\newcommand{\UU}{\mathbf{U}}
+\newcommand{\RR}{\mathbf{R}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\ut}{\mathbf{\tilde{u}}}
+\newcommand{\ff}{\mathbf{f}}
+\newcommand{\cc}{\mathbf{c}}
+\newcommand{\ee}{\mathbf{e}}
+\newcommand{\CC}{\mathbf{C}}
+\newcommand{\DD}{\mathbf{D}}
+\newcommand{\dd}{\mathbf{d}}
+\newcommand{\HH}{\mathbf{H}}
+\newcommand{\EE}{\mathbf{E}}
+\newcommand{\kk}{\mathbf{k}}
+\newcommand{\zz}{\mathbf{z}}
+\newcommand{\ww}{\mathbf{w}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\bmu}{\boldsymbol{\mu}}
+\DeclareMathOperator{\tr}{tr}
+
+
+
+\begin{document}
+
+
+\section{First order discrete SPH}
+\subsection{ \cite{koschier:2020:sphreview} }
+
+\begin{align*}
+  \int W(\rr',h) dV' &= 1 \\
+  W(\rr,h) &\ge 0 \\
+  \lim_{\substack{h' \rightarrow 0}} W(\rr,h') &= \delta(\rr) \\
+  W(\rr,h) &= W(-\rr,h) \\
+  W(\rr,h) &= 0  \text( for ) || \rr || \ge h
+\end{align*}
+
+\begin{align*}
+  A(\xx) &\approx (A * W) (\xx) = \int A(\xx') W(\xx-\xx',h) dV' \\
+       &= \int \frac{A(\xx')}{\rho(\xx')} W(\xx-\xx',h) \rho(\xx') dV' \\
+       &\approx \sum_j \frac{A_j m_j}{\rho_j} W_{ij}  \\ 
+  1 &\approx (1 * W) (\xx) = \int 1 W(\xx-\xx',h) dV' \approx \sum_j \frac{m_j}{\rho_j} W_{ij} \\
+  (A*W)(\xx) &= \int \left[ A(\xx) + \nabla A|_\xx \cdot (\xx' - \xx) + \frac{1}{2} (\xx' - \xx) \cdot \nabla \nabla A|_\xx (\xx' - \xx) +\mathcal{O} ((\xx' - \xx)^3) \right] W(\xx - \xx',h) dV' \\
+         &= A(\xx) \int W(\xx - \xx',h) dV'  + \nabla A|_\xx \cdot \int (\xx' - \xx) W(\xx - \xx',h) dV' + \mathcal{O} ((\xx' - \xx)^2) \\
+  \langle A(\xx_i) \rangle &= A_i \sum_j \frac{m_j}{\rho_j} W_{ij} + \nabla A |_{\xx_i} \cdot \sum_j \frac{m_j}{\rho_j} (\xx_i - \xx_j) W_{ij} + \mathcal{O}((\xx_i-\xx_j)^2) \\
+  0 &\approx \sum_j (\xx_i - \xx_j) \frac{m_j}{\rho_j} W_{ij} 
+\end{align*}
+
+\begin{align*}
+  \nabla A_i &\approx \sum_j A_j \frac{m_j}{\rho_j} \nabla W_{ij} \\
+  \nabla A_i &\approx \rho_i \left( \frac{A_i}{\rho_i^2} \langle \nabla \rho \rangle + \langle \nabla \left( \frac{A_i}{\rho_i} \right) \rangle \right) \\
+             &= \rho_i \sum_j m_j \left( \frac{A_i}{\rho_i^2} + \frac{A_j}{\rho_j^2} \right) \nabla_i W_{ij} \\
+             &= \frac{1}{V_i} \sum_j m_i m_j \left( \frac{A_i}{\rho_i^2} + \frac{A_j}{\rho_j^2} \right) \nabla_i W_{ij} \\
+          0   &\approx \sum_j m_j \left( \frac{1}{\rho_i^2} + \frac{1}{\rho_j^2} \right) \nabla_i W_{ij} 
+\end{align*}
+
+\section{Second order discrete SPH}
+\subsection{\cite{monaghan:2005:sph}}
+
+\begin{align*}
+  \nabla_a W_{ab} &= \rr_{ab} F_{ab}
+\end{align*}
+where $F_{ab} \le 0$ is a function of $\rr_{ab}$
+
+From Taylor Series
+\begin{align*}
+  I(\rr_a) &= \int (\kappa(\rr_a) + \kappa(\rr_b)) (T(\rr_a) - T(\rr_b)) F(|\rr_a - \rr_b|) d\rr_b \\
+  I &= \nabla \cdot ( \kappa \nabla T) + O(h^2) \\
+  \nabla \cdot ( \kappa_a \nabla T_a) &\approx \sum_b V_b (\kappa_a + \kappa_b) ( T_a - T_b ) F_{ab} 
+\end{align*}
+
+Proof
+\begin{align*}
+  I(\rr_a) &= \int (\kappa(\rr_b) + \kappa(\rr_b) + (\rr_a-\rr_b) \kappa'(\rr_b) + O((\rr_a-\rr_b)^2) ) \notag \\
+  & \qquad ( - T(\rr_b) + T(\rr_b) + (\rr_a-\rr_b) \cdot T'(\rr_b) + O((\rr_a-\rr_b)^2) )  F(|\rr_a - \rr_b|) d\rr_b  \\
+  I(\rr_a) &= \int (  2 \kappa(\rr_b) (\rr_a -\rr_b) \cdot T'(\rr_b) + O((\rr_a - \rr_b)^2) ) F(|\rr_a - \rr_b|) d\rr_b \\
+  I(\rr_a) &= \int 2 \kappa(\rr_b) T'(\rr_b) \cdot (\rr_a - \rr_b) F(|\rr_a - \rr_b|) d\rr_b \\
+  I_a &\approx \sum_b 2 V_b \kappa(\rr_b)  T'(\rr_b) \cdot \nabla_i W_{ab} = 2 \nabla \cdot ( \kappa_a \nabla T_a ) \\
+  \nabla \cdot ( \kappa_a \nabla T_a) &\approx \sum_b \frac{1}{2} V_b (\kappa_a + \kappa_b) ( T_a - T_b ) F_{ab} 
+\end{align*}
+
+
+\subsection{\cite{koschier:2020:sphreview}}
+
+\begin{align*}
+  \nabla^2 \AA_i &\approx  \sum_j \frac{m_j}{\rho_j} \AA_{ij} \frac{2 ||\nabla_i W_{ij} ||}{||\rr_{ij}||} \\
+  &=  \sum_j \frac{m_j}{\rho_j} \AA_{ij} \frac{\rr_{ij} \cdot ||\nabla_i W_{ij} ||}{||\rr_{ij}||^2} \\
+  \nabla^2 \AA_i &\approx 2(d+2) \sum_j \frac{m_j}{\rho_j} \frac{\AA_{ij} \cdot \rr_{ij} }{||\rr_{ij}||^2} \nabla_i W_{ij} \\
+\end{align*}
+This has momentum conservation
+\begin{align*}
+  \frac{1}{d+2} \nabla (\nabla \cdot \AA) - \frac{1}{2(d+2)} \nabla^2 \AA_i  &\approx - \sum_j \frac{m_j}{\rho_j} \frac{\AA_{ij} \cdot \rr_{ij}}{||\rr_{ij}||^2} \nabla_i W_{ij} \\
+  \nabla^2 \AA_i &\approx 2(d+2) \sum_j \frac{m_j}{\rho_j} \frac{\AA_{ij} \cdot \rr_{ij}}{||\rr_{ij}||^2} \nabla_i W_{ij} \\
+\end{align*}
+
+Different types of Pressure Poisson Equation (PPE). Total 3 types.
+\begin{align*}
+  \nabla \cdot \left( \frac{1}{\rho_i} \nabla p_i \right) &= \frac{\nabla \cdot \uu_i^*}{\Delta t} \\
+  \nabla \cdot \left( \frac{1}{\rho_i} \nabla p_i \right) &= V_i \sum_j \frac{\rho_i + \rho_j}{\rho_i \rho_j} \frac{(p_j - p_i) ( \xx_i - \xx_j ) }{ (\xx_i - \xx_j )^2 + \epsilon } \cdot \nabla W_{ij} \\
+  \nabla \cdot \left( \frac{1}{\rho_i} \nabla p_i \right) &= V_i \sum_j \left( \frac{\nabla p_j}{\rho_j} - \frac{\nabla p_i}{\rho_i} \right) \cdot \nabla W_{ij} \\
+  \nabla \cdot \left( \frac{1}{\rho_i} \nabla p_i \right) &= V_i \sum_j \frac{\rho_i + \rho_j}{2 \rho_i \rho_j} (p_j - p_i)  \nabla^2 W_{ij} 
+\end{align*}
+
+
+\bibliographystyle{apalike}
+\bibliography{../../references}
+
+\end{document}

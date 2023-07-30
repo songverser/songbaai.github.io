@@ -1,0 +1,103 @@
+
+\documentclass{article}
+
+\usepackage{fullpage,amsmath}
+\newcommand{\dt}{\Delta t}
+\newcommand{\pdv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\dv}[2]{\frac{d #1}{d #2}}
+\newcommand{\gp}[1]{{\left({#1}\right)}}
+\newcommand{\ab}[1]{{\left|{#1}\right|}}
+\newcommand{\mx}[1]{\begin{pmatrix}#1\end{pmatrix}}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+\newcommand{\xx}{\mathbf{x}}
+\renewcommand{\AA}{\mathbf{A}}
+\newcommand{\BB}{\mathbf{B}}
+\newcommand{\MM}{\mathbf{M}}
+\newcommand{\nn}{\mathbf{n}}
+\newcommand{\FF}{\mathbf{F}}
+\newcommand{\GG}{\mathbf{G}}
+\newcommand{\bg}{\mathbf{g}}
+\newcommand{\PP}{\mathbf{P}}
+\newcommand{\pp}{\mathbf{p}}
+\newcommand{\QQ}{\mathbf{Q}}
+\newcommand{\rr}{\mathbf{r}}
+\newcommand{\II}{\mathbf{I}}
+\newcommand{\KK}{\mathbf{K}}
+\newcommand{\uu}{\mathbf{u}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\ut}{\mathbf{\tilde{u}}}
+\newcommand{\ff}{\mathbf{f}}
+\newcommand{\cc}{\mathbf{c}}
+\newcommand{\ee}{\mathbf{e}}
+\newcommand{\CC}{\mathbf{C}}
+\newcommand{\DD}{\mathbf{D}}
+\newcommand{\dd}{\mathbf{d}}
+\newcommand{\HH}{\mathbf{H}}
+\newcommand{\EE}{\mathbf{E}}
+\newcommand{\kk}{\mathbf{k}}
+\newcommand{\zz}{\mathbf{z}}
+\newcommand{\ww}{\mathbf{w}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\bmu}{\boldsymbol{\mu}}
+\DeclareMathOperator{\tr}{tr}
+
+\begin{document}
+
+\section{IISPH}
+
+\begin{align*}
+  \dv{\rho}{t} &= - \rho \nabla \cdot \vv \\
+  \frac{\rho_i (t+\Delta t)  - \rho_i(t)}{\Delta t} &= \sum_j m_j \vv_{ij} (t + \Delta t) \nabla W_{ij} (t) \\
+  \vv_{i} (t + \Delta t) &= \vv_i (t) + \Delta t \frac{\FF_i^{adv}(t) + \FF_i^P(t)}{m_i} \\
+\end{align*}
+
+Implicit solve. Without boundary particles.
+\begin{align*}
+  \rho_i^{adv} &= \rho_i(t) + \Delta t \sum_j m_j \vv_{ij}^{adv} \nabla W_{ij}(t) \text{\qquad this is explicit} \\
+  \rho_0 - \rho_i^{adv} &= \rho_0 - \left( \rho_i(t) + \Delta t \sum_j m_j \vv_{ij}^{adv} \nabla W_{ij}(t) \right) \\
+  \rho_i(t + \Delta t)  &= \rho_0 \\
+  \rho_0 - \rho_i^{adv} &= \left( \rho_i(t) + \Delta t \sum_j m_j \vv_{ij}(t) \nabla W_{ij}(t)  \right) - \left( \rho_i(t) + \Delta t \sum_j m_j \vv_{ij}^{adv} \nabla W_{ij}(t) \right) \\
+  \rho_0 - \rho_i^{adv} &= \Delta t^2 \sum_j m_j \left( \frac{F_i^p(t)}{m_i} - \frac{F_j^p(t)}{m_j} \right) \nabla W_{ij} (t) \\
+  \vv_i(t)  &= \vv_i^{adv} + \Delta t \frac{\FF_i^{p}(t)}{m_i} \\
+  \AA(t) \pp(t) &= \bb(t) = \boldsymbol{\rho}_0 - \boldsymbol{\rho}^{adv}  \\
+\end{align*}
+In paper the last equation is all $t$, but I guess it should be $t+\Delta t$? It is implicit for $\rho_0$ anyway.
+
+
+Using relaxed Jacobi, General form
+$\xx_i^{t+1} = \frac{ b_i - \sum_{j\ne i} a_{ij} x_j^k }{a_{ii}}  $
+
+With pressure force equation, we get 
+\begin{align*}
+  \FF_i^p(t) &= - m_i \sum_j m_j \left(\frac{p_i(t)}{\rho_i^2(t)} + \frac{p_j(t)}{\rho_j^2(t)} \right) \nabla W_{ij}(t) \\
+  p_i^{l+1} &= (1-\omega) p_i^l + \omega \frac{ \rho_0 - \rho_i^{adv} - \sum_{j\ne i} a_{ij} p_j^l }{a_{ii}} \\
+  \Delta t^2  \frac{\FF_i^p}{m_i} &= \dd_{ii} p_i + \sum_j \dd_{ij} p_j \\
+  \dd_{ii} &= - \Delta t^2 \frac{1}{\rho_i^2} \sum_j m_j \nabla W_{ij} \\
+  \sum_j \dd_{ij} p_j  &= - \Delta t^2 \sum_j m_j \frac{1}{\rho_j^2} p_j \nabla W_{ij} \\
+  \rho_0 - \rho_i^{adv} &= \sum_j m_j ( \dd_{ii} p_i + \sum_j \dd_{ij} p_j - \dd_{jj} p_j - \sum_k \dd_{jk} p_k ) \nabla W_{ij} = a_{ii} p_i + \sum_{j\ne i} a_{ij} p_j \\
+  a_{ii} &= \sum_j m_j ( \dd_{ii} - \dd_{ji} ) \nabla W_{ij} \\
+  \dd_{ji}  &= - \Delta t^2 m_i \frac{1}{\rho_i^2}  \nabla W_{ji} \\
+\end{align*}
+Missing for $a_{ij}p_j$. Did in boundary one below
+
+With general boundary particles
+
+\begin{align*}
+  \rho_i(t+\Delta t) - \rho_i^{adv} &= \Delta t^2 \sum_j m_j \left( \frac{F_i^p(t)}{m_i} - \frac{F_j^p(t)}{m_j} \right) \nabla W_{ij} (t) + \Delta t^2 \sum_b m_b \frac{F_i^p(t)}{m_i} \nabla W_{ib} (t) \\
+  \FF_i^p(t) &= - m_i \sum_j m_j \left(\frac{p_i(t)}{\rho_i^2(t)} + \frac{p_j(t)}{\rho_j^2(t)} \right) \nabla W_{ij}(t) - m_i \sum_b m_b \frac{p_i(t)}{\rho_i^2(t)} \nabla W_{ij}(t) \\
+  \Delta t^2  \frac{\FF_i^p}{m_i} &= \dd_{ii} p_i + \sum_j \dd_{ij} p_j \\
+  \dd_{ii} &=  - \Delta t^2 \frac{1}{\rho_i^2} \left( \sum_j m_j \nabla W_{ij} + \sum_b m_b \nabla W_{ib} \right) \\
+  \sum_j \dd_{ij} p_j  &= - \Delta t^2 \sum_j m_j \frac{1}{\rho_j^2} \nabla W_{ij} = same \\
+\end{align*}
+\begin{align*}
+  \rho_i(t+\Delta t) - \rho_i^{adv} &= \sum_j m_j \left( \dd_{ii} p_i + \sum_j \dd_{ij} p_j  -  \dd_{jj} p_j - \sum_k \dd_{jk} p_k  \right) \nabla W_{ij} + \sum_b m_b \left( \dd_{ii} p_i + \sum_j \dd_{ij} p_j \right) \nabla W_{ib}   \\
+  a_{ii} &= \sum_j m_j ( \dd_{ii} - \dd_{ji} ) \nabla W_{ij} + \sum_b m_b \dd_{ii} \nabla W_{ib} \\
+  \sum_{j\ne i} a_{ij} p_j  &= \sum_j m_j \left( \sum_j \dd_{ij} p_j - \dd_{jj} p_j - \sum_{k\ne i} \dd_{jk} p_k \right) \nabla W_{ij} +  \sum_b m_b \left( \sum_j \dd_{ij} p_j \right) \nabla W_{ib}   \\
+  p_i^{l+1} &= (1-\omega) p_i^l + \omega \frac{ \rho_0 - \rho_i^{adv} - \sum_{j\ne i} a_{ij} p_j^l }{a_{ii}} 
+\end{align*}
+
+For volume or density map boundary, there is only one boundary particle for each sph particle.
+
+
+\end{document}
