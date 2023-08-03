@@ -1,0 +1,78 @@
+\documentclass{article}
+
+\usepackage{fullpage,amsmath}
+\usepackage{algorithm,algpseudocode}
+
+
+
+\begin{document}
+
+\section{Key ideas}
+
+
+\section{Basic Rules}
+
+Vector Algebra rules:
+
+Matrix Algebra rules:
+
+\begin{align}
+    AB \ne BA
+\end{align}
+
+\begin{align}
+    & A+B = B+A \\
+    & A+B+C = A+(B+C) = (A+B)+C \\
+    & A(BC)=A(BC)=(AB)C \\
+    & A(B+C) = AB+ AC \\
+\end{align}
+
+Matrix transposition rules:
+\begin{align}
+    & (A^T)^T = A \\
+    & (A+B)^T = A^T+B^T \\
+    & (AB)^T = B^T A^T \\
+    & (ABC)^T = C^T B^T A^T 
+\end{align}
+
+Matrix inverse rules:
+
+\begin{align}
+    &  AI = IA = A \\
+    &  A0 = 0 \\
+    &  I = A^{-1} A = A A^{-1} \\
+    &  (A^{-1})^{-1} = A \\
+    &  (AB)^{-1} = B^{-1} A^{-1}\\
+    &  (ABC)^{-1} = C^{-1} B^{-1} A^{-1} \\
+    &  (A^T)^{-1} = (A^{-1})^T 
+\end{align}
+
+
+\section{Gram-Schmidt algorithm}
+
+\begin{algorithm}
+    \caption{Gram-Schmidt algorithm}
+    \begin{algorithmic}
+        \State \textbf{given} n-vectors $a_1,...,a_k$
+        \For{$i=1,...,k$}
+        \State Orthogonalization. $\tilde{q}_i = a_i - (q_1^T a_i) q_1 - \cdots - (q_{i-1}^T a_i) a_{i-1} $
+        \State Test for linear dependence. if $\tilde{q}_i = 0$, quit.
+        \State Normalization. $q_i = \tilde{q}_i / ||\tilde{q}_i||$
+        \EndFor
+    \end{algorithmic}
+\end{algorithm}
+
+This algorithm has following properties
+\begin{enumerate}
+    \item $\tilde{q}_i \ne 0$, so the linear dependence test in step 2 is not satisfied, and there will not be divide by 0 error in step 3.
+    \item $q_1,...,q_i$ are orthonormal to each other.
+    \item $a_i$ is a linear combination of $q_1,...,q_i$.
+    \item $q_i$ is a linear combination of $a_1,...,a_i$.
+\end{enumerate}
+
+
+
+\end{document}
+
+
+\ref{Introduction to Applied Linear Algebra: Vectors, Matrices, and Least Squares - Boyd and Vandenberghe}
