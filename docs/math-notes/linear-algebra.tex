@@ -2,6 +2,8 @@
 
 \usepackage{fullpage,amsmath}
 \usepackage{algorithm,algpseudocode}
+\usepackage{multicol}
+\usepackage[parfill]{parskip} % no indent and empty line between paragraph
 
 
 
@@ -12,32 +14,46 @@
 
 \section{Basic Rules}
 
-Vector Algebra rules:
+The matrix or vector multiplication must have the middle dimention to be the same. Which means if matrix $A$ has dimention $a*b$, while matrix $B$ has dimention $c*d$. To get multiplication of $AB$ $b$ must equals $c$. The same rule works for tensor and vector.
 
-Matrix Algebra rules:
+For tensor the multiplication is working on bases. Such as for $V$ and $W$ be two vector space. Bases $B_V$ and $B_W$ represent the bases of two tensors. 
 
+For $v \in B_V$ and $w \in B_W$. If
+$$ x=\sum_{b \in B_V} x_b b \in V \text{ and } y=\sum_{c\in B_W} y_c c \in W  $$
+are vector compositon on their bases, then the tensor product of $x$ and $y$ is 
 \begin{align}
-    AB \ne BA
+    x \otimes y &= \left( \sum_{b \in B_V} x_b b \right) \otimes \left( \sum_{c\in B_W} y_c c \right)  \\
+    &= \sum_{b \in B_V} \sum_{c\in B_W} x_b y_c b \otimes c
 \end{align}
 
+So for those multiplications you need to define a minimal multiplication element. For vector it is the scalar, for matrix it is the row and column vector, for tensor it is the vector composition on their bases.
+
+
+Understanding the Matrix Algebra rules is crucial for understanding the Linear algebra as vector and tensor can be generalized to matrix. 
+\subsection{Matrix Algebra rules}
+
+\begin{multicols}{2}
+    
+\noindent
+
+    Matrix addition and multiplication rules:
 \begin{align}
     & A+B = B+A \\
     & A+B+C = A+(B+C) = (A+B)+C \\
-    & A(BC)=A(BC)=(AB)C \\
+    & AB \ne BA \\
+    & ABC=A(BC)=(AB)C \\
     & A(B+C) = AB+ AC \\
 \end{align}
+\vspace{\fill}
 
-Matrix transposition rules:
+\columnbreak
+
+Matrix transposition and inverse rules:
 \begin{align}
     & (A^T)^T = A \\
     & (A+B)^T = A^T+B^T \\
     & (AB)^T = B^T A^T \\
-    & (ABC)^T = C^T B^T A^T 
-\end{align}
-
-Matrix inverse rules:
-
-\begin{align}
+    & (ABC)^T = C^T B^T A^T  \\
     &  AI = IA = A \\
     &  A0 = 0 \\
     &  I = A^{-1} A = A A^{-1} \\
@@ -46,6 +62,7 @@ Matrix inverse rules:
     &  (ABC)^{-1} = C^{-1} B^{-1} A^{-1} \\
     &  (A^T)^{-1} = (A^{-1})^T 
 \end{align}
+\end{multicols}
 
 
 \section{Gram-Schmidt algorithm}
